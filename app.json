@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "hku-noodle",
+    "name": "HKU Noodle",
     "slug": "hku-noodle",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,11 +13,12 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "This app will optionally use Face ID or Touch ID to authorize"
+      }
     },
     "android": {
       "adaptiveIcon": {
