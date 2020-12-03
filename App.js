@@ -8,6 +8,8 @@ import { useFonts } from 'expo-font'
 
 import store from './store'
 import Login from './screens/Login'
+import Loading from './screens/Loading'
+import Tour from './screens/Tour'
 import Home from './screens/Home'
 
 const { Navigator, Screen } = createStackNavigator()
@@ -20,16 +22,19 @@ const App = () => {
   })
   if (!fontsReady) return null
 
+  const showTour = store.getState().config.tour.show
+
   return (
     <Provider store={store}>
       <SafeAreaProvider>
         <NavigationContainer>
-          <Navigator>
-            <Screen
-              name="Login"
-              component={Login}
-              options={{ header: () => null }}
-            />
+          <Navigator
+            initialRouteName="Login"
+            screenOptions={{ header: () => null }}
+          >
+            <Screen name="Login" component={Login} />
+            {showTour && <Screen name="Tour" component={Tour} />}
+            <Screen name="Loading" component={Loading} />
             <Screen name="Home" component={Home} />
           </Navigator>
         </NavigationContainer>

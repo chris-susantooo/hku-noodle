@@ -4,7 +4,8 @@ import { initAppFailure, initAppSuccess } from '../config/actions'
 
 export const initialState = {
   user: {
-    username: ''
+    username: '',
+    fullname: ''
   },
   token: ''
 }
@@ -14,12 +15,14 @@ export default createReducer(initialState, builder =>
     .addCase(initAppSuccess, (state, { payload }) => {
       state.user.username = payload.username
     })
-    .addCase(initAppFailure, (state, { payload }) => {
-      state.user.username = payload.username
+    .addCase(initAppFailure, state => {
+      state.user.username = ''
     })
     .addCase(loginUserSuccess, (state, { payload }) => {
-      state.user.username = payload.username
-      state.token = payload.token
+      const { token, username, fullname } = payload
+      state.token = token
+      state.user.username = username
+      state.user.fullname = fullname
     })
     .addDefaultCase(() => {})
 )

@@ -5,9 +5,12 @@ import { spawn } from 'redux-saga/effects'
 import authReducer from './auth'
 import configReducer from './config'
 import loadingReducer from './loading'
+import messageReducer from './message'
+import courseReducer from './course'
 
 import authSaga from './auth/saga'
 import configSaga from './config/saga'
+import courseSaga from './course/saga'
 
 import { initAppRequest } from './config/actions'
 
@@ -17,7 +20,9 @@ const store = configureStore({
   reducer: {
     auth: authReducer,
     config: configReducer,
-    loading: loadingReducer
+    loading: loadingReducer,
+    message: messageReducer,
+    course: courseReducer
   },
   middleware: [...getDefaultMiddleware({ thunk: false }), sagaMiddleware]
 })
@@ -25,6 +30,7 @@ const store = configureStore({
 function* rootSaga() {
   yield spawn(authSaga)
   yield spawn(configSaga)
+  yield spawn(courseSaga)
 }
 
 sagaMiddleware.run(rootSaga)

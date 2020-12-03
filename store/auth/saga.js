@@ -1,6 +1,7 @@
 import { put, select, takeLeading, takeLatest, call } from 'redux-saga/effects'
 import * as LA from 'expo-local-authentication'
 import * as SecureStore from 'expo-secure-store'
+import { difference as _difference } from 'lodash-es'
 import {
   localAuthRequest,
   localAuthSuccess,
@@ -11,6 +12,7 @@ import {
 } from './actions'
 import { getUser } from './selectors'
 import loginUser from '../../api/login'
+import { getCurrentCourseIds } from '../course/selectors'
 
 function* onLocalAuthRequest() {
   const hasBioHardware = yield LA.hasHardwareAsync()
@@ -42,9 +44,40 @@ function* onLocalAuthSuccess() {
   yield put(loginUserRequest({ username, password }))
 }
 
+const getCurrentSemester = date => {
+  const year = date.getFullYear()
+  const month = date.getMonth()
+
+  if (month < 8) {
+    return { year: year - 1, semester: 2 }
+  }
+  return { year, semester: 1 }
+}
+
 function* onLoginRequest({ payload: { username, password } }) {
   try {
-    const { nextUrl, token } = yield call(loginUser, username, password)
+    const { courses, token, fullname } = yield call(
+      loginUser,
+      username,
+      password
+    )
+
+    let currentCourseIds = yield select(getCurrentCourseIds)
+    const now = new Date()
+    const { year, semester } = getCurrentSemester(now)
+
+    if (!currentCourseIds.length) {
+      currentCourseIds = Object.keys(courses).filter(
+        k =>
+          (courses[k].year === year && courses[k].semester === semester) ||
+          (!courses[k].semester && courses[k].year === year)
+      )
+    }
+
+    const savedCurrentCourseIds = yield select(getCurrentCourseIds)
+    const hasNewCourse =
+      _difference(savedCurrentCourseIds, currentCourseIds).length > 0
+
     const secureStoreUsable = yield SecureStore.isAvailableAsync()
     if (secureStoreUsable) {
       yield Promise.all([
@@ -52,9 +85,19 @@ function* onLoginRequest({ payload: { username, password } }) {
         SecureStore.setItemAsync('password', password)
       ])
     }
-    yield put(loginUserSuccess({ nextUrl, token, username }))
+    yield put(
+      loginUserSuccess({
+        courses,
+        currentCourseIds,
+        token,
+        username,
+        fullname,
+        hasNewCourse
+      })
+    )
   } catch (e) {
-    yield put(loginUserFailure({ error: e }))
+    console.error(e) // eslint-disable-line no-console
+    yield put(loginUserFailure({ error: 'Invalid username or password' }))
   }
 }
 
