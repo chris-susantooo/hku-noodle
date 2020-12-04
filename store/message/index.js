@@ -1,5 +1,5 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
-import { loginUserFailure } from '../auth/actions'
+import { loginUserFailure, logoutUserSuccess } from '../auth/actions'
 
 export const dismissMessage = createAction('DISMISS_MESSAGE')
 
@@ -11,6 +11,7 @@ export default createReducer({}, builder =>
     .addCase(dismissMessage, (state, { payload }) => {
       if (state[payload]) delete state[payload]
     })
+    .addCase(logoutUserSuccess, () => {})
 )
 
 export const createMessageSelector = action => state => {

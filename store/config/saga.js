@@ -11,11 +11,19 @@ import {
 import { saveCurrentCourses } from '../course/actions'
 import { getUser } from '../auth/selectors'
 
-function* onInitApp() {
+function* onInitApp({ payload: existingUsername } = {}) {
   try {
-    const username = yield SecureStore.getItemAsync('username')
+    const username =
+      existingUsername || (yield SecureStore.getItemAsync('username'))
+
+    if (!username) {
+      yield put(initAppSuccess({}))
+      return
+    }
+
     const userSettingsRaw = yield AsyncStorage.getItem(username)
-    const userSettings = yield JSON.parse(userSettingsRaw)
+    const userSettings = (yield JSON.parse(userSettingsRaw)) || { show: true }
+
     yield put(initAppSuccess({ username, userSettings }))
   } catch (e) {
     yield put(initAppFailure())

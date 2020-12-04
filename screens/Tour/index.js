@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { StatusBar } from 'expo-status-bar'
-import { func, shape } from 'prop-types'
+import { bool, func, shape } from 'prop-types'
 
 import { View } from 'react-native'
 import SafeView from '../../components/SafeView'
@@ -24,7 +24,7 @@ import { saveCurrentCourses } from '../../store/course/actions'
 
 const pages = [WelcomePage, AboutNoodlePage, SelectCoursesPage]
 
-const Tour = ({ navigation }) => {
+const Tour = ({ navigation, route }) => {
   const [page, setPage] = useState(0)
   const dispatch = useDispatch()
   const slider = useRef(null)
@@ -32,14 +32,14 @@ const Tour = ({ navigation }) => {
   const hasNewCourse = useSelector(getHasNewCourse)
 
   useEffect(() => {
-    if (hasNewCourse && slider.current) {
-      slider.current.goTo(pages.length - 1)
+    if ((hasNewCourse || route.params?.edit) && slider.current) {
+      setTimeout(() => slider.current.goTo(pages.length - 1), 200)
     }
-  }, [])
+  }, [route])
 
   const onFinish = () => {
     dispatch(saveCurrentCourses())
-    navigation.replace('Loading')
+    navigation.replace('Courses')
   }
 
   return (
@@ -80,7 +80,8 @@ const Tour = ({ navigation }) => {
 }
 
 Tour.propTypes = {
-  navigation: shape({ replace: func.isRequired }).isRequired
+  navigation: shape({ replace: func.isRequired }).isRequired,
+  route: shape({ params: shape({ edit: bool }) }).isRequired
 }
 
 export default Tour

@@ -12,12 +12,14 @@ const loginUser = async (username, password, { portal } = {}) => {
       username,
       password
     }),
-    { responseType: 'text' }
+    { responseType: 'text', withCredentials: true }
   )
 
   const nextUrl = data.split('"').find(s => s.startsWith('https://'))
 
-  const { data: nextData } = await axios.get(nextUrl)
+  const { data: nextData } = await axios.get(nextUrl, {
+    withCredentials: true
+  })
 
   const root = parse(nextData)
   const token = extractToken(root)

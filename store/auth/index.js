@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { loginUserSuccess } from './actions'
+import { loginUserSuccess, logoutUserSuccess } from './actions'
 import { initAppFailure, initAppSuccess } from '../config/actions'
 
 export const initialState = {
@@ -24,5 +24,6 @@ export default createReducer(initialState, builder =>
       state.user.username = username
       state.user.fullname = fullname
     })
+    .addCase(logoutUserSuccess, () => initialState)
     .addDefaultCase(() => {})
 )

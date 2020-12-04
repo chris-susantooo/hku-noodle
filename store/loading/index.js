@@ -1,4 +1,6 @@
 export default function loadingReducer(state = {}, { type }) {
+  if (type === 'LOGOUT_USER_SUCCESS') return {}
+
   const matches = /(.*)_(REQUEST|SUCCESS|FAILURE)$/.exec(type)
   if (!matches) return state
 

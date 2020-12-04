@@ -8,9 +8,9 @@ import { useFonts } from 'expo-font'
 
 import store from './store'
 import Login from './screens/Login'
-import Loading from './screens/Loading'
+import CourseViewer from './screens/Course'
 import Tour from './screens/Tour'
-import Home from './screens/Home'
+import Courses from './screens/Courses'
 
 const { Navigator, Screen } = createStackNavigator()
 
@@ -22,20 +22,31 @@ const App = () => {
   })
   if (!fontsReady) return null
 
-  const showTour = store.getState().config.tour.show
-
   return (
     <Provider store={store}>
       <SafeAreaProvider>
         <NavigationContainer>
           <Navigator
             initialRouteName="Login"
-            screenOptions={{ header: () => null }}
+            screenOptions={{
+              headerShown: false,
+              headerTintColor: 'black',
+              headerLeftContainerStyle: { marginLeft: 5 },
+              headerBackTitleStyle: {
+                color: 'black',
+                marginLeft: 5,
+                fontFamily: 'Medium'
+              }
+            }}
           >
             <Screen name="Login" component={Login} />
-            {showTour && <Screen name="Tour" component={Tour} />}
-            <Screen name="Loading" component={Loading} />
-            <Screen name="Home" component={Home} />
+            <Screen name="Tour" component={Tour} />
+            <Screen
+              name="Course"
+              component={CourseViewer}
+              options={{ headerShown: true, headerTitle: '' }}
+            />
+            <Screen name="Courses" component={Courses} />
           </Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

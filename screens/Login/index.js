@@ -41,7 +41,7 @@ const Login = ({ navigation }) => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigation.replace(showTour || hasNewCourse ? 'Tour' : 'Loading')
+      navigation.replace(showTour || hasNewCourse ? 'Tour' : 'Courses')
     }
   }, [isLoggedIn, hasNewCourse])
 

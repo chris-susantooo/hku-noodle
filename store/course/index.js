@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { loginUserSuccess } from '../auth/actions'
+import { loginUserSuccess, logoutUserSuccess } from '../auth/actions'
 import { initAppSuccess } from '../config/actions'
 import { toggleCurrentCourse } from './actions'
 
@@ -39,5 +39,6 @@ export default createReducer(initState, builder =>
         state.hiddenCurrent.push(payload.courseId)
       }
     })
+    .addCase(logoutUserSuccess, () => initState)
     .addDefaultCase(() => {})
 )

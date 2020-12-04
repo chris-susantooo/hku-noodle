@@ -1,4 +1,11 @@
-import { put, select, takeLeading, takeLatest, call } from 'redux-saga/effects'
+import {
+  put,
+  select,
+  takeLeading,
+  takeLatest,
+  call,
+  take
+} from 'redux-saga/effects'
 import * as LA from 'expo-local-authentication'
 import * as SecureStore from 'expo-secure-store'
 import { difference as _difference } from 'lodash-es'
@@ -8,11 +15,19 @@ import {
   localAuthFailure,
   loginUserRequest,
   loginUserSuccess,
-  loginUserFailure
+  loginUserFailure,
+  logoutUserRequest,
+  logoutUserSuccess
 } from './actions'
-import { getUser } from './selectors'
+import { getToken, getUser } from './selectors'
 import loginUser from '../../api/login'
 import { getCurrentCourseIds } from '../course/selectors'
+import logoutUser from '../../api/logout'
+import {
+  initAppFailure,
+  initAppRequest,
+  initAppSuccess
+} from '../config/actions'
 
 function* onLocalAuthRequest() {
   const hasBioHardware = yield LA.hasHardwareAsync()
@@ -62,6 +77,9 @@ function* onLoginRequest({ payload: { username, password } }) {
       password
     )
 
+    yield put(initAppRequest(username))
+    yield take([initAppSuccess.toString(), initAppFailure.toString()])
+
     let currentCourseIds = yield select(getCurrentCourseIds)
     const now = new Date()
     const { year, semester } = getCurrentSemester(now)
@@ -101,8 +119,20 @@ function* onLoginRequest({ payload: { username, password } }) {
   }
 }
 
+function* onLogoutRequest() {
+  const token = yield select(getToken)
+  yield Promise.all([
+    logoutUser(token),
+    SecureStore.deleteItemAsync('username'),
+    SecureStore.deleteItemAsync('password')
+  ])
+  yield put(logoutUserSuccess())
+  yield put(initAppRequest())
+}
+
 export default function* authSaga() {
   yield takeLeading(localAuthRequest.toString(), onLocalAuthRequest)
   yield takeLeading(localAuthSuccess.toString(), onLocalAuthSuccess)
   yield takeLatest(loginUserRequest.toString(), onLoginRequest)
+  yield takeLatest(logoutUserRequest.toString(), onLogoutRequest)
 }

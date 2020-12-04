@@ -13,7 +13,9 @@ export const getCourses = state => state.course.courses
 export const getCurrentCourseIds = state => state.course.current
 export const getHiddenCurrentCourseIds = state => state.course.hiddenCurrent
 export const getCoursesArr = state =>
-  Object.values(getCourses(state)).sort(courseSorter)
+  Object.values(getCourses(state))
+    .filter(course => !state.course.hiddenCurrent.includes(course.id))
+    .sort(courseSorter)
 export const getSuggestedCurrentCourses = state =>
   getCurrentCourseIds(state)
     .map(courseId => state.course.courses[courseId])

@@ -24,7 +24,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.chris.susanto.hkunoodle"
     },
     "web": {
       "favicon": "./assets/favicon.png"
