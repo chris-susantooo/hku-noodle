@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as SecureStorage from 'expo-secure-store'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { StatusBar } from 'expo-status-bar'
 import { Platform } from 'react-native'
@@ -50,6 +52,11 @@ const CoursesPage = ({ navigation }) => {
     return (
       <CourseItem
         onPress={() => navigation.push('Course', { url: course.url })}
+        onLongPress={async () => {
+          await AsyncStorage.clear()
+          await SecureStorage.deleteItemAsync('username')
+          await SecureStorage.deleteItemAsync('password')
+        }}
       >
         <CourseItemContent>
           <CourseBadge semester={course.semester} year={course.year} />

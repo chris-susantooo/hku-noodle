@@ -19,7 +19,7 @@ import { LoginForm, LoginButton } from './styles'
 const Login = ({ navigation }) => {
   const user = useSelector(getUser)
 
-  const [username, setUsername] = useState(user.username)
+  const [username, setUsername] = useState(user?.username ?? '')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
 
